@@ -1,37 +1,53 @@
-(function (window, undefined) {
-    "use strict";
+function insertScriptTag(url) {
+  var scriptTag =  document.createElement('script');
+  scriptTag.setAttribute('src', url);
+  document.body.appendChild(scriptTag);
 
-    // jQuery
-    window.jQuery || document.write('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"><\/script>');
+  console.log("Inserted: " + url);
+}
 
-    // History & ScrollTo (Wait for jQuery)
-    var interval = setInterval(function () {
-        if (window.jQuery) {
-            clearInterval(interval);
+(function(window, undefined) {
+  "use strict";
 
-            // History.js & ScrollTo.js
-            window.History || document.write('<script src="//browserstate.github.io/history.js/scripts/bundled/html4+html5/jquery.history.js"><\/script>');
-            jQuery.ScrollTo || document.write('<script src="//balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"><\/script>');
+  // jQuery
+  if (!window.jQuery) {
+    insertScriptTag('//ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js');
+  }
 
-            interval = setInterval(function () {
-                if (window.History && window.History.initHtml4) {
-                    clearInterval(interval);
 
-                    // Ajaxify-html5.js
-                    document.write('<script src="//rawgithub.com/browserstate/ajaxify/master/ajaxify-html5.js"><\/script>');
+  // History & ScrollTo (Wait for jQuery)
+  var interval = setInterval(function() {
+    if (window.jQuery) {
+      clearInterval(interval);
 
-                    interval = setInterval(function () {
-                        if (jQuery.fn.ajaxify) {
-                            clearInterval(interval);
-                            alert('History.js It! Is ready for action!');
-                        }
-                    }, 500);
-                } else if (console && console.log) {
-                    console.log("Loading history.js and scrollto.js");
-                }
-            }, 500);
+      // History.js & ScrollTo.js
+      if (!window.History || !window.History.initHtml4) {
+        insertScriptTag('//browserstate.github.io/history.js/scripts/bundled/html4+html5/jquery.history.js');
+      }
+
+      if (!jQuery.ScrollTo) {
+        insertScriptTag('//balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js');
+      }
+
+      interval = setInterval(function() {
+        if (window.History && window.History.initHtml4) {
+          clearInterval(interval);
+
+          // Ajaxify-html5.js
+          insertScriptTag('//rawgithub.com/browserstate/ajaxify/master/ajaxify-html5.js');
+
+          interval = setInterval(function() {
+            if (jQuery.fn.ajaxify) {
+              clearInterval(interval);
+              alert('History.js It! Is ready for action!');
+            }
+          }, 500);
         } else if (console && console.log) {
-            console.log("Loading jQuery");
+          console.log("Loading history.js and scrollto.js");
         }
-    }, 500);
+      }, 500);
+    } else if (console && console.log) {
+      console.log("Loading jQuery");
+    }
+  }, 500);
 }(window));
